@@ -8,6 +8,8 @@ import com.carbon.assessment.repository.RateRepo;
 import com.carbon.assessment.repository.ReservationRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -65,6 +67,6 @@ public class ReservationServiceImp implements ReservationService{
 
     @Override
     public Reservation createReservation(Reservation reservation) {
-        return null;
+        return reservationRepo.save(reservation);
     }
 }

@@ -33,33 +33,38 @@ public class ReservationServiceImp implements ReservationService{
     @Override
     public CustomerOverdueStay getCustomerOverStay(Long id) throws GlobalException {
         Optional<Reservation> reservation = reservationRepo.findByCustomerId(id);
-
+        //Check if the reservatin exists
         if(reservation.isEmpty()){
             throw new GlobalException("Reservation not found");
         }
+        //Check if the room type is available
         Optional<OverdueRates> roomRate = rateRepo.findByRoomType(reservation.get().getRoomType().toLowerCase());
         if(roomRate.isEmpty()){
             throw new GlobalException("Roomtype not found");
         }
+
         LocalDateTime currentDate= LocalDateTime.now().withNano(0);
         DayOfWeek isWeekday = currentDate.getDayOfWeek();
-        float overstay= 0.0F;
+        float overstayAmount= 0.0F;
         int hrs=0;
+
+        //if the currendate(assumed to be the checkout time) time is after the expected checkout time,
+        // user has overstayed, calculate overdue stay
         if(currentDate.isAfter(reservation.get().getExpectedCheckoutTime())){
             Duration diff = Duration.between(reservation.get().getExpectedCheckoutTime(),currentDate);
             long minutes = diff.toMinutes();
-
+            //over stay hours
             hrs =(int) Math.ceil(((float)minutes)/60);
             if(isWeekday.getValue() > 5){
-                overstay = (roomRate.get().getWeekEndRate()/100) * hrs * reservation.get().getHourlyRate();
+                overstayAmount = (roomRate.get().getWeekEndRate()/100) * hrs * reservation.get().getHourlyRate();
             }else{
-                overstay =  (roomRate.get().getWeekEndRate()/100) * hrs * reservation.get().getHourlyRate();
+                overstayAmount =  (roomRate.get().getWeekEndRate()/100) * hrs * reservation.get().getHourlyRate();
             }
         }
         return new CustomerOverdueStay(
                 id,
                 reservation.get().getRoomType(),
-                overstay,
+                overstayAmount,
                 reservation.get().getExpectedCheckoutTime(),
                 currentDate,
                 hrs);

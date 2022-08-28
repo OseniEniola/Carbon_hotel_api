@@ -1,5 +1,5 @@
 
-##Build a Service that track overstay fees in a hospitality system
+###Build a Service that track overstay fees in a hospitality system
 
 ###Overview
     *Your client, hospitality company realizes that a number of it’s guests have fallen into the habit of keeping their bookings occupied beyond their designated checkout time. 
